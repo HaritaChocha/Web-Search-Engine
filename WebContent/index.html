@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>Web Search Engine</title>
+        <link href="css/wse.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <script src="js/jquery.min.js"></script>
+        <script>
+        $(document)
+		.ready(
+				function() {
+					$("#searchBtn")
+							.click(
+									function() {
+										$.ajax({
+											url : "/_WebSearchEngine/search?searchQuery="+ $("#query").val(),
+											type : 'GET',
+											dataType : 'json',
+											contentType : 'application/json; charset=utf-8',
+											success : function(result) {
+												$("#results").empty();
+												var start_time = new Date().getTime();
+												var count = 0;
+												$.each(result,function(k,v) {
+													$("#results").append('\n\n<li><a href=\''+ v +'\'>'+ v + '</a></li>\n')
+												count+= 1;	
+												});
+												var end_time = new Date().getTime();
+												$("#searchResult").empty();	
+												//if(count != 0){
+												//	$("#searchResult").append("About " + count + " results ("+ (end_time - start_time)/1000 +" seconds)")
+												//}else {
+												//	$("#searchResult").append("no results")
+												//}
+												$("#searchResult").append("Total Time to Search :"+ (end_time - start_time)/1000 +" seconds")
+												
+												},
+											error : function(jqXHR,exception) {
+													if (jqXHR.status === 0) {
+														alert('Not connected.\nPlease verify your network connection.');
+													} else if (jqXHR.status == 404) {
+														alert('The requested page not found. [404]');
+													} else if (jqXHR.status == 500) {
+														alert('Internal Server Error [500].');
+													} else if (exception === 'parsererror') {
+														alert('Requested JSON parse failed.');
+													} else if (exception === 'timeout') {
+														alert('Time out error.');
+													} else if (exception === 'abort') {
+														alert('Ajax request aborted.');
+													} else {
+														alert('Uncaught Error.\n'+ jqXHR.responseText);
+													}
+												}
+											});
+									});
+				});
+        </script>
+    </head>
+    <body>
+        <div class="form-wrapper cf">
+            <input type="text" placeholder="Search here..." id="query" required>
+            <button type="submit" id="searchBtn">Search</button>
+        </div>
+        <p id="searchResult"></p>
+        <ul id="results" style="text-decoration: none;">
+        </ul>
+        <script src="js/jquery.min.js"></script>
+    </body>
+</html>
+
